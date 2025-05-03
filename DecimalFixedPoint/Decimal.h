@@ -7,8 +7,30 @@ class Decimal {
 public:
     Decimal() = default;
 
-    // NOTE: For negative value specify minus for both int_part and frac_part except when one of it is zero.
-    Decimal(int int_part, int frac_part) : rep{ int_part * scale + frac_part } {};
+    // NOTE: For simplicity we suppose that the input string is always correct numeric string
+    // with only two fractional digits (if presented).
+    Decimal(std::string number_str) {
+        int int_part = 0;
+        int frac_part = 0;
+        bool is_negative = false;
+        for (int i = 0; i < number_str.size(); i++) {
+            if (number_str[i] == '-') {
+                is_negative = true;
+                continue;
+            }
+
+            if (number_str[i] == '.') {
+                frac_part += (number_str[i + 1] - '0') * 10; // First fractional digit.
+                frac_part += (number_str[i + 2] - '0');      // Second fractional digit.
+                break;
+            }
+
+            int_part *= 10;
+            int_part += number_str[i] - '0';
+        }
+
+        rep = static_cast<int32_t>((int_part * scale + frac_part) * (is_negative ? -1 : 1));
+    };
 
     std::string to_string() {
         const int32_t rep_abs = std::abs(rep);
