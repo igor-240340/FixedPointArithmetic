@@ -10,6 +10,7 @@ Implementation of fixed-point arithmetic using integers.
 ### Binary Fixed Point
 ```cpp
 #include <iostream>
+
 #include "Fixed16.h"
 
 int main() {
@@ -33,6 +34,7 @@ int main() {
 ### Decimal Fixed Point
 ```cpp
 #include <iostream>
+
 #include "Decimal.h"
 
 int main() {
