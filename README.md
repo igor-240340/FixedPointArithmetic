@@ -31,6 +31,31 @@ int main() {
 }
 ```
 
+Also we can use it without relying on floating point at all.
+
+```cpp
+#include <iostream>
+
+#include "Fixed16.h"
+
+int main() {
+    Fixed16 a{"3.75"};
+    Fixed16 b{"1.5"};
+
+    Fixed16 sum = a + b;
+    Fixed16 diff = a - b;
+    Fixed16 prod = a * b;
+    Fixed16 quot = a / b;
+
+    std::cout << "a + b = " << sum.to_string() << "\n";
+    std::cout << "a - b = " << diff.to_string() << "\n";
+    std::cout << "a * b = " << prod.to_string() << "\n";
+    std::cout << "a / b = " << quot.to_string() << "\n";
+
+    return 0;
+}
+```
+
 ### Decimal Fixed Point
 ```cpp
 #include <iostream>
