@@ -1,15 +1,16 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 class Fixed16 {
 public:
     Fixed16() = default;
+
+    // Constructs from representation.
     Fixed16(int32_t num) : rep{ num } {};
 
-    // NOTE: We always construct from floating-point values.
-    // It's ok,because almost all possible integer values from which we could build Fixed16 are representable in float exactly.
-    // Moreover, as int32_t is defined in MSVC as typedef int int32_t, we can't overload constructor anyway.
+    // NOTE: As int32_t is defined in MSVC as typedef int int32_t, we can't overload constructor to construct from pure int.
     //Fixed16(int num) : value{ static_cast<int32_t>(num << frac_bit_len) } {};
 
     // NOTE:
@@ -24,11 +25,57 @@ public:
     // but here we don't care and just truncate.
     Fixed16(float num) : rep{ static_cast<int32_t>(num * (1 << frac_bit_len)) } {};
 
+    // NOTE: With this approach we can't handle fractions that close to the max representable signed value's fraction: 0.9999847412109375. 
+    // We can't also handle fractions that in general have many digits. All this leads to an overflow and incorrect results, so beware.
+    Fixed16(const std::string& num_str) : rep{} {
+        const int sign = (num_str[0] == '-') ? -1 : 1;
+
+        uint64_t value;
+        int i = (sign < 0) ? 1 : 0;
+        for (value = 0; isdigit(num_str.data()[i]); ++i)
+            value = 10 * value + (num_str[i] - '0');
+
+        if (num_str[i] == '.')
+            ++i;
+
+        uint64_t overscale;
+        for (overscale = 1; isdigit(num_str.data()[i]); ++i) {
+            value = 10 * value + (num_str.data()[i] - '0');
+            overscale *= 10;
+        }
+
+        rep = static_cast<int32_t>(value * (1 << frac_bit_len) / overscale) * sign;
+    };
+
     // NOTE: For conversion into numeric string without losing precision we should extract decimal digits of
     // whole part and fractional part separately. For example, by calculating mod 10 for whole part and multiplying
     // fractional part by 10. But for now we don't care, we just playing around fixed-point arithmetic for fun.
     float to_float() const {
         return static_cast<float>(rep) / (1 << frac_bit_len);
+    }
+
+    // NOTE: For simplicity we just hardcoded decimal precision.
+    std::string to_string() const {
+        const int decimal_precision = 16;
+
+        std::string num_str{ (rep < 0) ? "-" : "" };
+
+        // NOTE: integer part can be zero.
+        const int32_t abs_rep = std::abs(rep);
+        const int32_t int_part = abs_rep >> frac_bit_len;
+        num_str += std::to_string(int_part) + ".";
+
+        int32_t frac_part = abs_rep - (int_part << frac_bit_len);
+        for (int i = 0; i < decimal_precision; ++i) {
+            frac_part = frac_part * 10;
+            const int32_t digit = frac_part >> frac_bit_len;
+            num_str += std::to_string(digit);
+
+            // Remove extracted fractional digit.
+            frac_part = frac_part - (digit << frac_bit_len);
+        }
+
+        return num_str;
     }
 
     Fixed16 operator+(Fixed16 rh) const {
