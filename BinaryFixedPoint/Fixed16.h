@@ -60,7 +60,7 @@ public:
 
         std::string num_str{ (rep < 0) ? "-" : "" };
 
-        // NOTE: integer part can be zero.
+        // NOTE: Integer part can be zero.
         const int32_t abs_rep = std::abs(rep);
         const int32_t int_part = abs_rep >> frac_bit_len;
         num_str += std::to_string(int_part) + ".";
