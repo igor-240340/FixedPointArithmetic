@@ -14,8 +14,8 @@ Implementation of fixed-point arithmetic using integers.
 #include "Fixed16.h"
 
 int main() {
-    Fixed16 a{3.75f};
-    Fixed16 b{1.5f};
+    Fixed16 a{ 3.75f };
+    Fixed16 b{ 1.5f };
 
     Fixed16 sum = a + b;
     Fixed16 diff = a - b;
@@ -39,8 +39,8 @@ Also we can use it without relying on floating point at all.
 #include "Fixed16.h"
 
 int main() {
-    Fixed16 a{"3.75"};
-    Fixed16 b{"1.5"};
+    Fixed16 a{ "3.75" };
+    Fixed16 b{ "1.5" };
 
     Fixed16 sum = a + b;
     Fixed16 diff = a - b;
@@ -63,8 +63,8 @@ int main() {
 #include "Decimal.h"
 
 int main() {
-    Decimal a("12.34");
-    Decimal b("1.66");
+    Decimal a{ "12.34" };
+    Decimal b{ "1.66" };
 
     Decimal sum = a + b;
     Decimal diff = a - b;
