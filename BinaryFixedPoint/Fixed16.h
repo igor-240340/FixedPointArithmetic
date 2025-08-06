@@ -94,7 +94,7 @@ public:
 
         // (a * scale) * (b * scale) =
         // (a * b) * scale * scale =>
-        // (a * b) * scale = true_product / scale.
+        // (a * b) * scale = overscaled_product / scale.
         return Fixed16{ static_cast<int32_t>(overscaled_product >> frac_bit_len) };
     };
 
